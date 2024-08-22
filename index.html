@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload and Display with Coordinates</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div><h1>Upload and Display Image</h1></div>
+        <div><input type="file" id="imageInput" accept="image/*" /></div>
+        <div><input type="file" id="additionalImageInput" accept="image/*" /></div>
+        <div class="image-container">
+            <img id="displayImage" src="" alt="Uploaded Image" />
+            <div id="markerContainer"></div>
+        </div>
+        <div id="draggableContainer"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
