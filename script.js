@@ -5,6 +5,11 @@ const data = {
     "additional_image": { x: 0, y: 0, src: "", visible: false }
 };
 
+let mainImageDimensions = {
+    width: 0,
+    height: 0
+};
+
 document.getElementById('imageInput').addEventListener('change', function() {
     const fileInput = document.getElementById('imageInput');
     const displayImage = document.getElementById('displayImage');
@@ -47,6 +52,10 @@ function createDraggableElements() {
 
     const displayImage = document.getElementById('displayImage');
     const imgRect = displayImage.getBoundingClientRect();
+
+    // Update the global variable with the height and width of the main image
+    mainImageDimensions.width = imgRect.width;
+    mainImageDimensions.height = imgRect.height;
 
     Object.keys(data).forEach(key => {
         if (key === 'additional_image' && !data[key].visible) return;
@@ -130,7 +139,11 @@ function createDraggableElements() {
                     data[key].x = x;
                     data[key].y = y;
 
-                    console.log(data);
+                    // Log data with the main image dimensions from the global variable
+                    console.log({
+                        ...data,
+                        main_image_dimensions: mainImageDimensions
+                    });
                 }
             });
         }
@@ -152,41 +165,6 @@ document.getElementById('displayImage').addEventListener('drop', function(event)
     event.preventDefault();
 
     const displayImage = document.getElementById('displayImage');
-    const imgRect = displayImage.getBoundingClientRect();
-    let x = event.clientX - imgRect.left;
-    let y = event.clientY - imgRect.top;
-
-    const elementId = event.dataTransfer.getData('text/plain');
-    const draggableElement = document.getElementById(elementId);
-
-    if (draggableElement) {
-        // Boundary check to prevent dropping out of the main image
-        if (x < 0) x = 0;
-        if (y < 0) y = 0;
-        if (x + draggableElement.offsetWidth > imgRect.width) x = imgRect.width - draggableElement.offsetWidth;
-        if (y + draggableElement.offsetHeight > imgRect.height) y = imgRect.height - draggableElement.offsetHeight;
-
-        draggableElement.style.left = `${x}px`;
-        draggableElement.style.top = `${y}px`;
-
-        document.getElementById('markerContainer').appendChild(draggableElement);
-
-        data[elementId].x = x;
-        data[elementId].y = y;
-
-        console.log(data);
-    }
-});
-
-// Handle drop events for the additional image separately
-document.getElementById('displayImage').addEventListener('dragover', function(event) {
-    event.preventDefault();
-});
-
-document.getElementById('displayImage').addEventListener('drop', function(event) {
-    event.preventDefault();
-
-    const displayImage = document.getElementById('displayImage');
     const rect = displayImage.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -203,36 +181,10 @@ document.getElementById('displayImage').addEventListener('drop', function(event)
         data[elementId].x = x;
         data[elementId].y = y;
 
-        console.log(data);
-    }
-});
-
-
-
-document.getElementById('displayImage').addEventListener('dragover', function(event) {
-    event.preventDefault();
-});
-
-document.getElementById('displayImage').addEventListener('drop', function(event) {
-    event.preventDefault();
-
-    const displayImage = document.getElementById('displayImage');
-    const rect = displayImage.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    const elementId = event.dataTransfer.getData('text/plain');
-    const draggableElement = document.getElementById(elementId);
-
-    if (draggableElement) {
-        draggableElement.style.left = `${x - draggableElement.offsetWidth / 2}px`;
-        draggableElement.style.top = `${y - draggableElement.offsetHeight / 2}px`;
-
-        document.getElementById('markerContainer').appendChild(draggableElement);
-
-        data[elementId].x = x;
-        data[elementId].y = y;
-
-        console.log(data);
+        // Log data with the main image dimensions from the global variable
+        console.log({
+            ...data,
+            main_image_dimensions: mainImageDimensions
+        });
     }
 });
