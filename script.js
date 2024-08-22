@@ -66,11 +66,12 @@ function createDraggableElements() {
                 event.dataTransfer.setDragImage(element, element.width / 2, element.height / 2);
             });
         } else {
-            // Custom drag logic for other draggable elements
+            // Create the text elements with default font size
             element = document.createElement('div');
             element.id = key;
             element.className = 'draggable';
             element.textContent = key.replace('_', ' ');
+            element.style.fontSize = data[key].font || '12px'; // Apply default font size
 
             const dropdown = document.createElement('select');
             dropdown.className = 'dropdown';
