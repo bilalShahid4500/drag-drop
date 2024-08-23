@@ -5,7 +5,6 @@ const data = {
     "person_title": { x: 0, y: 0, font: "12px" },
     "additional_image": { x: 0, y: 0, src: "", visible: false }
 };
-
 let mainImageDimensions = {
     width: 0,
     height: 0
@@ -224,7 +223,6 @@ function startImageEditing() {
     const displayImage = document.getElementById('displayImage');
     const editableImage = resources[2].value;
 
-    console.log(editableImage.files)
     if (editableImage) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -232,20 +230,20 @@ function startImageEditing() {
             displayImage.style.display = 'block';
             createDraggableElements();
         };
-        reader.readAsDataURL(editableImage);
+        reader.readAsDataURL(editableImage[0]);
     }    
 }
 
 function addLogoImage() {
     const editableLogo = resources[3].value;
-    if (editableLogo) {
+    if (editableLogo[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
             data.additional_image.src = e.target.result;
             data.additional_image.visible = true;
             createDraggableElements();
         }
-        reader.readAsDataURL(editableLogo);
+        reader.readAsDataURL(editableLogo[0]);
     }
 }
 
