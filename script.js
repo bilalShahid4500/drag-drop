@@ -1,3 +1,4 @@
+const resources = [];
 const data = {
     "sponser_name": { x: 0, y: 0, font: "12px" },
     "person_name": { x: 0, y: 0, font: "12px" },
@@ -5,244 +6,121 @@ const data = {
     "additional_image": { x: 0, y: 0, src: "", visible: false }
 };
 
-// document.getElementById('imageInput').addEventListener('change', function() {
-//     const fileInput = document.getElementById('imageInput');
-//     const displayImage = document.getElementById('displayImage');
+let mainImageDimensions = {
+    width: 0,
+    height: 0
+};
 
-//     if (fileInput.files && fileInput.files[0]) {
-//         const reader = new FileReader();
+function createDraggableElements() {
+    const draggableContainer = document.getElementById('draggableContainer');
+    draggableContainer.innerHTML = ''; // Clear existing elements
 
-//         reader.onload = function(e) {
-//             displayImage.src = e.target.result;
-//             displayImage.style.display = 'block';
+    const displayImage = document.getElementById('displayImage');
+    const imgRect = displayImage.getBoundingClientRect();
 
-//             // Trigger re-positioning of draggable elements after image is loaded
-//             createDraggableElements();
-//         }
+    // Update the global variable with the height and width of the main image
+    mainImageDimensions.width = imgRect.width;
+    mainImageDimensions.height = imgRect.height;
 
-//         reader.readAsDataURL(fileInput.files[0]);
-//     }
-// });
+    Object.keys(data).forEach(key => {
+        if (key === 'additional_image' && !data[key].visible) return;
 
-// document.getElementById('additionalImageInput').addEventListener('change', function() {
-//     const fileInput = document.getElementById('additionalImageInput');
+        let element;
+        if (key === 'additional_image') {
+            // Old code for additional image drag-and-drop
+            element = document.createElement('img');
+            element.src = data[key].src;
+            element.id = key;
+            element.className = 'draggable';
+            element.style.maxWidth = '100px';
+            element.style.position = 'absolute';
 
-//     if (fileInput.files && fileInput.files[0]) {
-//         const reader = new FileReader();
+            element.addEventListener('dragstart', function(event) {
+                event.dataTransfer.setData('text/plain', key);
+                event.dataTransfer.setDragImage(element, element.width / 2, element.height / 2);
+            });
+        } else {
+            // Create the text elements with default font size
+            element = document.createElement('div');
+            element.id = key;
+            element.className = 'draggable';
+            element.textContent = key.replace('_', ' ');
+            element.style.fontSize = data[key].font || '12px'; // Apply default font size
 
-//         reader.onload = function(e) {
-//             data.additional_image.src = e.target.result;
-//             data.additional_image.visible = true;
+            const dropdown = document.createElement('select');
+            dropdown.className = 'dropdown';
+            for (let i = 9; i <= 30; i++) {
+                const option = document.createElement('option');
+                option.value = `${i}px`;
+                option.textContent = `${i}px`;
+                if (i + "px" === data[key].font) {
+                    option.selected = true;
+                }
+                dropdown.appendChild(option);
+            }
 
-//             createDraggableElements();
-//         }
+            dropdown.addEventListener('change', function() {
+                element.style.fontSize = this.value;
+                data[key].font = this.value;
+            });
 
-//         reader.readAsDataURL(fileInput.files[0]);
-//     }
-// });
+            element.appendChild(dropdown);
 
-// function createDraggableElements() {
-//     const draggableContainer = document.getElementById('draggableContainer');
-//     draggableContainer.innerHTML = ''; // Clear existing elements
+            // Custom drag logic for text elements
+            let isDragging = false;
+            let offsetX, offsetY;
 
-//     const displayImage = document.getElementById('displayImage');
-//     const imgRect = displayImage.getBoundingClientRect();
+            element.addEventListener('mousedown', function(event) {
+                isDragging = true;
+                offsetX = event.clientX - element.getBoundingClientRect().left;
+                offsetY = event.clientY - element.getBoundingClientRect().top;
+                document.body.style.cursor = 'move';
+            });
 
-//     Object.keys(data).forEach(key => {
-//         if (key === 'additional_image' && !data[key].visible) return;
+            document.addEventListener('mousemove', function(event) {
+                if (isDragging) {
+                    let x = event.clientX - offsetX;
+                    let y = event.clientY - offsetY;
 
-//         let element;
-//         if (key === 'additional_image') {
-//             // Old code for additional image drag-and-drop
-//             element = document.createElement('img');
-//             element.src = data[key].src;
-//             element.id = key;
-//             element.className = 'draggable';
-//             element.style.maxWidth = '100px';
-//             element.style.position = 'absolute';
+                    // Boundary check to prevent dragging out of the main image
+                    if (x < imgRect.left) x = imgRect.left;
+                    if (y < imgRect.top) y = imgRect.top;
+                    if (x + element.offsetWidth > imgRect.right) x = imgRect.right - element.offsetWidth;
+                    if (y + element.offsetHeight > imgRect.bottom) y = imgRect.bottom - element.offsetHeight;
 
-//             element.addEventListener('dragstart', function(event) {
-//                 event.dataTransfer.setData('text/plain', key);
-//                 event.dataTransfer.setDragImage(element, element.width / 2, element.height / 2);
-//             });
-//         } else {
-//             // Custom drag logic for other draggable elements
-//             element = document.createElement('div');
-//             element.id = key;
-//             element.className = 'draggable';
-//             element.textContent = key.replace('_', ' ');
+                    element.style.left = `${x}px`;
+                    element.style.top = `${y}px`;
+                }
+            });
 
-//             const dropdown = document.createElement('select');
-//             dropdown.className = 'dropdown';
-//             for (let i = 9; i <= 30; i++) {
-//                 const option = document.createElement('option');
-//                 option.value = `${i}px`;
-//                 option.textContent = `${i}px`;
-//                 if (i + "px" === data[key].font) {
-//                     option.selected = true;
-//                 }
-//                 dropdown.appendChild(option);
-//             }
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    document.body.style.cursor = 'default';
 
-//             dropdown.addEventListener('change', function() {
-//                 element.style.fontSize = this.value;
-//                 data[key].font = this.value;
-//             });
+                    const x = element.getBoundingClientRect().left - imgRect.left;
+                    const y = element.getBoundingClientRect().top - imgRect.top;
 
-//             element.appendChild(dropdown);
+                    data[key].x = x;
+                    data[key].y = y;
 
-//             // Custom drag logic for text elements
-//             let isDragging = false;
-//             let offsetX, offsetY;
+                    // Log data with the main image dimensions from the global variable
+                    console.log({
+                        ...data,
+                        main_image_dimensions: mainImageDimensions
+                    });
+                }
+            });
+        }
 
-//             element.addEventListener('mousedown', function(event) {
-//                 isDragging = true;
-//                 offsetX = event.clientX - element.getBoundingClientRect().left;
-//                 offsetY = event.clientY - element.getBoundingClientRect().top;
-//                 document.body.style.cursor = 'move';
-//             });
+        // Position markers to the right side of the image
+        element.style.left = `${imgRect.left + imgRect.width + 10}px`;
+        element.style.top = `${10 + Object.keys(data).indexOf(key) * 40}px`;
 
-//             document.addEventListener('mousemove', function(event) {
-//                 if (isDragging) {
-//                     let x = event.clientX - offsetX;
-//                     let y = event.clientY - offsetY;
+        draggableContainer.appendChild(element);
+    });
+}
 
-//                     // Boundary check to prevent dragging out of the main image
-//                     if (x < imgRect.left) x = imgRect.left;
-//                     if (y < imgRect.top) y = imgRect.top;
-//                     if (x + element.offsetWidth > imgRect.right) x = imgRect.right - element.offsetWidth;
-//                     if (y + element.offsetHeight > imgRect.bottom) y = imgRect.bottom - element.offsetHeight;
-
-//                     element.style.left = `${x}px`;
-//                     element.style.top = `${y}px`;
-//                 }
-//             });
-
-//             document.addEventListener('mouseup', function() {
-//                 if (isDragging) {
-//                     isDragging = false;
-//                     document.body.style.cursor = 'default';
-
-//                     const x = element.getBoundingClientRect().left - imgRect.left;
-//                     const y = element.getBoundingClientRect().top - imgRect.top;
-
-//                     data[key].x = x;
-//                     data[key].y = y;
-
-//                     console.log(data);
-//                 }
-//             });
-//         }
-
-//         // Position markers to the right side of the image
-//         element.style.left = `${imgRect.left + imgRect.width + 10}px`;
-//         element.style.top = `${10 + Object.keys(data).indexOf(key) * 40}px`;
-
-//         draggableContainer.appendChild(element);
-//     });
-// }
-
-// // Handle drop events for the additional image separately
-// document.getElementById('displayImage').addEventListener('dragover', function(event) {
-//     event.preventDefault();
-// });
-
-// document.getElementById('displayImage').addEventListener('drop', function(event) {
-//     event.preventDefault();
-
-//     const displayImage = document.getElementById('displayImage');
-//     const imgRect = displayImage.getBoundingClientRect();
-//     let x = event.clientX - imgRect.left;
-//     let y = event.clientY - imgRect.top;
-
-//     const elementId = event.dataTransfer.getData('text/plain');
-//     const draggableElement = document.getElementById(elementId);
-
-//     if (draggableElement) {
-//         // Boundary check to prevent dropping out of the main image
-//         if (x < 0) x = 0;
-//         if (y < 0) y = 0;
-//         if (x + draggableElement.offsetWidth > imgRect.width) x = imgRect.width - draggableElement.offsetWidth;
-//         if (y + draggableElement.offsetHeight > imgRect.height) y = imgRect.height - draggableElement.offsetHeight;
-
-//         draggableElement.style.left = `${x}px`;
-//         draggableElement.style.top = `${y}px`;
-
-//         document.getElementById('markerContainer').appendChild(draggableElement);
-
-//         data[elementId].x = x;
-//         data[elementId].y = y;
-
-//         console.log(data);
-//     }
-// });
-
-// // Handle drop events for the additional image separately
-// document.getElementById('displayImage').addEventListener('dragover', function(event) {
-//     event.preventDefault();
-// });
-
-// document.getElementById('displayImage').addEventListener('drop', function(event) {
-//     event.preventDefault();
-
-//     const displayImage = document.getElementById('displayImage');
-//     const rect = displayImage.getBoundingClientRect();
-//     const x = event.clientX - rect.left;
-//     const y = event.clientY - rect.top;
-
-//     const elementId = event.dataTransfer.getData('text/plain');
-//     const draggableElement = document.getElementById(elementId);
-
-//     if (draggableElement) {
-//         draggableElement.style.left = `${x - draggableElement.offsetWidth / 2}px`;
-//         draggableElement.style.top = `${y - draggableElement.offsetHeight / 2}px`;
-
-//         document.getElementById('markerContainer').appendChild(draggableElement);
-
-//         data[elementId].x = x;
-//         data[elementId].y = y;
-
-//         console.log(data);
-//     }
-// });
-
-
-
-// document.getElementById('displayImage').addEventListener('dragover', function(event) {
-//     event.preventDefault();
-// });
-
-// document.getElementById('displayImage').addEventListener('drop', function(event) {
-//     event.preventDefault();
-
-//     const displayImage = document.getElementById('displayImage');
-//     const rect = displayImage.getBoundingClientRect();
-//     const x = event.clientX - rect.left;
-//     const y = event.clientY - rect.top;
-
-//     const elementId = event.dataTransfer.getData('text/plain');
-//     const draggableElement = document.getElementById(elementId);
-
-//     if (draggableElement) {
-//         draggableElement.style.left = `${x - draggableElement.offsetWidth / 2}px`;
-//         draggableElement.style.top = `${y - draggableElement.offsetHeight / 2}px`;
-
-//         document.getElementById('markerContainer').appendChild(draggableElement);
-
-//         data[elementId].x = x;
-//         data[elementId].y = y;
-
-//         console.log(data);
-//     }
-// });
-
-
-// info stepper code start form here // 
-
-/**
- * Define a function to navigate betweens form steps.
- * It accepts one parameter. That is - step number.
- */
 const navigateToFormStep = (stepNumber) => {
     /**
      * Hide all form steps.
@@ -293,9 +171,7 @@ const navigateToFormStep = (stepNumber) => {
         }
     }
 };
-/**
- * Select all form navigation buttons, and loop through them.
- */
+
 document.querySelectorAll(".btn-navigate-form-step").forEach((formNavigationBtn) => {
     /**
      * Add a click event listener to the button.
@@ -314,29 +190,95 @@ document.querySelectorAll(".btn-navigate-form-step").forEach((formNavigationBtn)
 
 document.getElementById("userAccountSetupForm").addEventListener("submit", function(event) {
     event.preventDefault(); // Prevent default form submission
-
-    let values = [];
-
     // Get language from step 1
     const languageSelect = document.querySelector("#step-1 select");
     const languageValue = languageSelect.options[languageSelect.selectedIndex].value;
-    values.push({ step: 1, value: languageValue });
+    resources.push({ step: 1, value: languageValue });
 
     // Get template category from step 2
     const categorySelect = document.querySelector("#step-2 select");
     const categoryValue = categorySelect.options[categorySelect.selectedIndex].value;
-    values.push({ step: 2, value: categoryValue });
+    resources.push({ step: 2, value: categoryValue });
 
     // Get file from step 3 (template selection)
     const templateFileInput = document.querySelector("#step-3 input[type='file']");
     const templateFile = templateFileInput.files.length > 0 ? templateFileInput.files : "No file selected";
-    values.push({ step: 3, value: templateFile });
+    resources.push({ step: 3, value: templateFile });
 
     // Get file from step 4 (logo upload)
     const logoFileInput = document.querySelector("#step-4 input[type='file']");
     const logoFile = logoFileInput.files.length > 0 ? logoFileInput.files : "No file selected";
-    values.push({ step: 4, value: logoFile });
+    resources.push({ step: 4, value: logoFile });
 
     // Log the collected values
-    console.log(values);
+    console.log(resources);
+    document.getElementById('main-editor').style.display = 'block';
+    document.getElementById('info-wizard').style.display = 'none';
+    addLogoImage();
+    startImageEditing();
+    attachDragAndDropEventListners();
+
 });
+
+function startImageEditing() {
+    const displayImage = document.getElementById('displayImage');
+    const editableImage = resources[2].value;
+
+    console.log(editableImage.files)
+    if (editableImage) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            displayImage.src = e.target.result;
+            displayImage.style.display = 'block';
+            createDraggableElements();
+        };
+        reader.readAsDataURL(editableImage);
+    }    
+}
+
+function addLogoImage() {
+    const editableLogo = resources[3].value;
+    if (editableLogo) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            data.additional_image.src = e.target.result;
+            data.additional_image.visible = true;
+            createDraggableElements();
+        }
+        reader.readAsDataURL(editableLogo);
+    }
+}
+
+function attachDragAndDropEventListners() {
+    document.getElementById('displayImage').addEventListener('dragover', function(event) {
+        event.preventDefault();
+    });
+    
+    document.getElementById('displayImage').addEventListener('drop', function(event) {
+        event.preventDefault();
+    
+        const displayImage = document.getElementById('displayImage');
+        const rect = displayImage.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+    
+        const elementId = event.dataTransfer.getData('text/plain');
+        const draggableElement = document.getElementById(elementId);
+    
+        if (draggableElement) {
+            draggableElement.style.left = `${x - draggableElement.offsetWidth / 2}px`;
+            draggableElement.style.top = `${y - draggableElement.offsetHeight / 2}px`;
+    
+            document.getElementById('markerContainer').appendChild(draggableElement);
+    
+            data[elementId].x = x;
+            data[elementId].y = y;
+    
+            // Log data with the main image dimensions from the global variable
+            console.log({
+                ...data,
+                main_image_dimensions: mainImageDimensions
+            });
+        }
+    });
+}

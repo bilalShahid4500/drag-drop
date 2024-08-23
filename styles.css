@@ -222,3 +222,7 @@ ul.form-stepper li a .form-stepper-circle {
 .form-stepper a {
     cursor: default;
 }
+
+.editor-container {
+    display: none;
+}
