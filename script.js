@@ -248,31 +248,33 @@ function addLogoImage() {
 }
 
 function attachDragAndDropEventListners() {
-    document.getElementById('displayImage').addEventListener('dragover', function(event) {
+    const displayImage = document.getElementById('displayImage');
+    displayImage.addEventListener('dragover', function(event) {
         event.preventDefault();
     });
-    
-    document.getElementById('displayImage').addEventListener('drop', function(event) {
+
+    displayImage.addEventListener('drop', function(event) {
         event.preventDefault();
-    
-        const displayImage = document.getElementById('displayImage');
+
         const rect = displayImage.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
-    
+
         const elementId = event.dataTransfer.getData('text/plain');
         const draggableElement = document.getElementById(elementId);
-    
+
         if (draggableElement) {
             draggableElement.style.left = `${x - draggableElement.offsetWidth / 2}px`;
             draggableElement.style.top = `${y - draggableElement.offsetHeight / 2}px`;
-    
-            document.getElementById('markerContainer').appendChild(draggableElement);
-    
+
+            // Append to markerContainer to keep it within the main image container
+            const markerContainer = document.getElementById('markerContainer');
+            markerContainer.appendChild(draggableElement);
+
+            // Update data object with the new coordinates relative to the main image
             data[elementId].x = x;
             data[elementId].y = y;
-    
-            // Log data with the main image dimensions from the global variable
+
             console.log({
                 ...data,
                 main_image_dimensions: mainImageDimensions
