@@ -104,10 +104,10 @@ function createDraggableElements() {
                     data[key].y = y;
 
                     // Log data with the main image dimensions from the global variable
-                    console.log({
-                        ...data,
-                        main_image_dimensions: mainImageDimensions
-                    });
+                    // console.log({
+                    //     ...data,
+                    //     main_image_dimensions: mainImageDimensions
+                    // });
                 }
             });
         }
@@ -121,50 +121,22 @@ function createDraggableElements() {
 }
 
 const navigateToFormStep = (stepNumber) => {
-    /**
-     * Hide all form steps.
-     */
     document.querySelectorAll(".form-step").forEach((formStepElement) => {
         formStepElement.classList.add("d-none");
     });
-    /**
-     * Mark all form steps as unfinished.
-     */
+ 
     document.querySelectorAll(".form-stepper-list").forEach((formStepHeader) => {
         formStepHeader.classList.add("form-stepper-unfinished");
         formStepHeader.classList.remove("form-stepper-active", "form-stepper-completed");
     });
-    /**
-     * Show the current form step (as passed to the function).
-     */
+
     document.querySelector("#step-" + stepNumber).classList.remove("d-none");
-    /**
-     * Select the form step circle (progress bar).
-     */
     const formStepCircle = document.querySelector('li[step="' + stepNumber + '"]');
-    /**
-     * Mark the current form step as active.
-     */
     formStepCircle.classList.remove("form-stepper-unfinished", "form-stepper-completed");
     formStepCircle.classList.add("form-stepper-active");
-    /**
-     * Loop through each form step circles.
-     * This loop will continue up to the current step number.
-     * Example: If the current step is 3,
-     * then the loop will perform operations for step 1 and 2.
-     */
     for (let index = 0; index < stepNumber; index++) {
-        /**
-         * Select the form step circle (progress bar).
-         */
         const formStepCircle = document.querySelector('li[step="' + index + '"]');
-        /**
-         * Check if the element exist. If yes, then proceed.
-         */
         if (formStepCircle) {
-            /**
-             * Mark the form step as completed.
-             */
             formStepCircle.classList.remove("form-stepper-unfinished", "form-stepper-active");
             formStepCircle.classList.add("form-stepper-completed");
         }
@@ -212,6 +184,7 @@ document.getElementById("userAccountSetupForm").addEventListener("submit", funct
     // Log the collected values
     console.log(resources);
     document.getElementById('main-editor').style.display = 'block';
+    document.getElementById('main-editor-btn').style.display = 'block';
     document.getElementById('info-wizard').style.display = 'none';
     addLogoImage();
     startImageEditing();
@@ -267,18 +240,41 @@ function attachDragAndDropEventListners() {
             draggableElement.style.left = `${x - draggableElement.offsetWidth / 2}px`;
             draggableElement.style.top = `${y - draggableElement.offsetHeight / 2}px`;
 
-            // Append to markerContainer to keep it within the main image container
             const markerContainer = document.getElementById('markerContainer');
             markerContainer.appendChild(draggableElement);
 
-            // Update data object with the new coordinates relative to the main image
             data[elementId].x = x;
             data[elementId].y = y;
 
-            console.log({
-                ...data,
-                main_image_dimensions: mainImageDimensions
-            });
+            // console.log({
+            //     ...data,
+            //     main_image_dimensions: mainImageDimensions
+            // });
         }
     });
+}
+
+function sendPreviewCall() {
+    let obj = {
+        file: resources[2].value,
+        data: data, 
+        width: mainImageDimensions.width, 
+        height: mainImageDimensions.height
+    }
+
+    console.log(obj);
+}
+
+function sendSaveCall() {
+    let obj = {
+        file: resources[2].value,
+        data: data, 
+        width: mainImageDimensions.width, 
+        height: mainImageDimensions.height,
+        language: resources[0].value, 
+        type: resources[1].value, 
+        preview: ''
+    }
+
+    console.log(obj);
 }
