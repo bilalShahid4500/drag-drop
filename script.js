@@ -1,4 +1,4 @@
-const resources = [];
+let resources = [];
 const data = {
     "sponser_name": { x: 0, y: 0, font: "12px" },
     "person_name": { x: 0, y: 0, font: "12px" },
@@ -102,12 +102,6 @@ function createDraggableElements() {
 
                     data[key].x = x;
                     data[key].y = y;
-
-                    // Log data with the main image dimensions from the global variable
-                    // console.log({
-                    //     ...data,
-                    //     main_image_dimensions: mainImageDimensions
-                    // });
                 }
             });
         }
@@ -144,33 +138,30 @@ const navigateToFormStep = (stepNumber) => {
 };
 
 document.querySelectorAll(".btn-navigate-form-step").forEach((formNavigationBtn) => {
-    /**
-     * Add a click event listener to the button.
-     */
     formNavigationBtn.addEventListener("click", () => {
-        /**
-         * Get the value of the step.
-         */
         const stepNumber = parseInt(formNavigationBtn.getAttribute("step_number"));
-        /**
-         * Call the function to navigate to the target form step.
-         */
-        navigateToFormStep(stepNumber);
+        if (formNavigationBtn.innerText === "Next")  {
+            if (validateForm(stepNumber - 1)) {
+                navigateToFormStep(stepNumber);
+            }
+        } else {
+            navigateToFormStep(stepNumber);
+        }
     });
 });
 
 document.getElementById("userAccountSetupForm").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent default form submission
-    // Get language from step 1
+    event.preventDefault(); 
+    resources = [];
     const languageSelect = document.querySelector("#step-1 select");
     const languageValue = languageSelect.options[languageSelect.selectedIndex].value;
     resources.push({ step: 1, value: languageValue });
-
+    
     // Get template category from step 2
     const categorySelect = document.querySelector("#step-2 select");
     const categoryValue = categorySelect.options[categorySelect.selectedIndex].value;
     resources.push({ step: 2, value: categoryValue });
-
+    
     // Get file from step 3 (template selection)
     const templateFileInput = document.querySelector("#step-3 input[type='file']");
     const templateFile = templateFileInput.files.length > 0 ? templateFileInput.files : "No file selected";
@@ -179,6 +170,11 @@ document.getElementById("userAccountSetupForm").addEventListener("submit", funct
     // Get file from step 4 (logo upload)
     const logoFileInput = document.querySelector("#step-4 input[type='file']");
     const logoFile = logoFileInput.files.length > 0 ? logoFileInput.files : "No file selected";
+    if (logoFile == "No file selected") {
+        alert(`Step 4 must be filled out`);
+        return
+    }
+
     resources.push({ step: 4, value: logoFile });
 
     // Log the collected values
@@ -195,7 +191,6 @@ document.getElementById("userAccountSetupForm").addEventListener("submit", funct
 function startImageEditing() {
     const displayImage = document.getElementById('displayImage');
     const editableImage = resources[2].value;
-
     if (editableImage) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -277,4 +272,23 @@ function sendSaveCall() {
     }
 
     console.log(obj);
+}
+
+function validateForm(stepNumber) {
+    let form = document.forms["userAccountSetupForm"];
+    let field = form.querySelector(`[name='${stepNumber}']`);
+
+    if (!field) {
+        alert(`Step ${stepNumber} field not found`);
+        return false;
+    }
+
+    let value = field.value;
+
+    if (value === "" || value === null || value === "Select Language" || value === "Select Templete Category") {
+        alert(`Step ${stepNumber} must be filled out`);
+        return false;
+    } 
+
+    return true;
 }
