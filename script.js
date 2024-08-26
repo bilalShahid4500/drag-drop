@@ -107,7 +107,7 @@ function createDraggableElements() {
         }
 
         // Position markers to the right side of the image
-        element.style.left = `${imgRect.left + imgRect.width + 10}px`;
+        element.style.left = `${imgRect.left + imgRect.width + 20}px`;
         element.style.top = `${10 + Object.keys(data).indexOf(key) * 40}px`;
 
         draggableContainer.appendChild(element);
@@ -249,16 +249,42 @@ function attachDragAndDropEventListners() {
     });
 }
 
-function sendPreviewCall() {
-    let obj = {
-        file: resources[2].value,
-        data: data, 
-        width: mainImageDimensions.width, 
-        height: mainImageDimensions.height
-    }
+async function sendPreviewCall() {
+    const formData = new FormData();
+    formData.append('file', resources[2].value[0]);
+    formData.append('data', JSON.stringify(data));
+    formData.append('width', mainImageDimensions.width);
+    formData.append('height', mainImageDimensions.height);
+    formData.append('id', 4);
 
-    console.log(obj);
+    try {
+        // Make the API call and wait for the response
+        const response = await fetch('http://localhost:8000/api/edit_image_preview', {
+            method: 'POST',
+            body: formData,
+        });
+
+        // Check if the response is OK
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        // Convert the response into a Blob and create a URL
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+
+        // Display the modal and set the image source
+        const modal = document.getElementById("myModal");
+        const img = document.getElementById("base64Img");
+        modal.style.display = "block";
+        img.src = imageUrl;
+
+        console.log('Success:', response);
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
+
 
 function sendSaveCall() {
     let obj = {
@@ -268,7 +294,8 @@ function sendSaveCall() {
         height: mainImageDimensions.height,
         language: resources[0].value, 
         type: resources[1].value, 
-        preview: ''
+        preview: '',
+        id: 4
     }
 
     console.log(obj);
@@ -291,4 +318,9 @@ function validateForm(stepNumber) {
     } 
 
     return true;
+}
+
+function closeModal() {
+    const modal = document.getElementById("myModal");
+    modal.style.display = "none";
 }
