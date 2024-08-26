@@ -267,3 +267,21 @@ ul.form-stepper li a .form-stepper-circle {
     text-decoration: none;
     cursor: pointer;
 }
+.saveBtn {
+    width: 100px;
+    margin: 0 auto;
+    margin-top: 15px;
+    background: #00d900;
+    border: none;
+    color: #fff;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+}
+.previewBtn {
+    width: 100px;
+    background: #4361ee;
+    border: none;
+    color: #fff;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+}

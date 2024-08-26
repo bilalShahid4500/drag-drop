@@ -1,4 +1,5 @@
 let resources = [];
+let recievedPreview = [];
 const data = {
     "sponser_name": { x: 0, y: 0, font: "12px" },
     "person_name": { x: 0, y: 0, font: "12px" },
@@ -105,7 +106,6 @@ function createDraggableElements() {
                 }
             });
         }
-
         // Position markers to the right side of the image
         element.style.left = `${imgRect.left + imgRect.width + 20}px`;
         element.style.top = `${10 + Object.keys(data).indexOf(key) * 40}px`;
@@ -258,28 +258,28 @@ async function sendPreviewCall() {
     formData.append('id', 4);
 
     try {
-        // Make the API call and wait for the response
         const response = await fetch('http://localhost:8000/api/edit_image_preview', {
             method: 'POST',
             body: formData,
         });
 
-        // Check if the response is OK
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
 
-        // Convert the response into a Blob and create a URL
         const blob = await response.blob();
         const imageUrl = URL.createObjectURL(blob);
 
-        // Display the modal and set the image source
+        const reader = new FileReader();
+        reader.readAsDataURL(blob); // Read the Blob as a Data URL (Base64)
+        reader.onloadend = function() {
+            recievedPreview = reader.result;
+        };
+
         const modal = document.getElementById("myModal");
         const img = document.getElementById("base64Img");
         modal.style.display = "block";
         img.src = imageUrl;
-
-        console.log('Success:', response);
     } catch (error) {
         console.error('Error:', error);
     }
@@ -294,11 +294,28 @@ function sendSaveCall() {
         height: mainImageDimensions.height,
         language: resources[0].value, 
         type: resources[1].value, 
-        preview: '',
+        preview: recievedPreview,
         id: 4
     }
 
     console.log(obj);
+    const formSaveData = new FormData();
+    formSaveData.append('file', resources[2].value[0]); 
+    formSaveData.append('data', JSON.stringify(data)); 
+    formSaveData.append('width', mainImageDimensions.width);
+    formSaveData.append('height', mainImageDimensions.height);
+    formSaveData.append('language', resources[0].value);
+    formSaveData.append('type', resources[1].value);
+    formSaveData.append('preview', recievedPreview);
+    formSaveData.append('id', 4);
+
+    fetch('http://localhost:8000/api/save_file_data', {
+        method: 'POST', 
+        body: formSaveData,
+    })
+    .then(data => {
+        console.log('Success:', data);
+    })
 }
 
 function validateForm(stepNumber) {

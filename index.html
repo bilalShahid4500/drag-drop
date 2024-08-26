@@ -19,7 +19,7 @@
         <div id="draggableContainer"></div>
     </div>
     <div id="main-editor-btn" >
-        <button onclick="sendPreviewCall()">Preview</button>
+        <button class="previewBtn" onclick="sendPreviewCall()">Preview</button>
     </div>
 
 
@@ -146,8 +146,8 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <img id="base64Img" src="" alt="Base64 Image"/>
+            <button class="saveBtn" onclick="sendSaveCall()">Save</button>
         </div>
-        <button onclick="sendSaveCall()">Save</button>
     </div>
 
     <script src="script.js"></script>
