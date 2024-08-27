@@ -83,10 +83,10 @@ function createDraggableElements() {
                     let y = event.clientY - offsetY;
 
                     // Boundary check to prevent dragging out of the main image
-                    if (x < imgRect.left) x = imgRect.left;
-                    if (y < imgRect.top) y = imgRect.top;
-                    if (x + element.offsetWidth > imgRect.right) x = imgRect.right - element.offsetWidth;
-                    if (y + element.offsetHeight > imgRect.bottom) y = imgRect.bottom - element.offsetHeight;
+                    // if (x < imgRect.left) x = imgRect.left;
+                    // if (y < imgRect.top) y = imgRect.top;
+                    // if (x + element.offsetWidth > imgRect.right) x = imgRect.right - element.offsetWidth;
+                    // if (y + element.offsetHeight > imgRect.bottom) y = imgRect.bottom - element.offsetHeight;
 
                     element.style.left = `${x}px`;
                     element.style.top = `${y}px`;
@@ -107,9 +107,10 @@ function createDraggableElements() {
             });
         }
         // Position markers to the right side of the image
-        element.style.left = `${imgRect.left + imgRect.width + 20}px`;
-        element.style.top = `${10 + Object.keys(data).indexOf(key) * 40}px`;
-
+        setTimeout(()=>{
+            // element.style.left = `${imgRect.left + imgRect.width + 20}px`;
+            element.style.top = `${10 + Object.keys(data).indexOf(key) * 40}px`;
+        })
         draggableContainer.appendChild(element);
     });
 }
@@ -223,7 +224,6 @@ function attachDragAndDropEventListners() {
 
     displayImage.addEventListener('drop', function(event) {
         event.preventDefault();
-
         const rect = displayImage.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;

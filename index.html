@@ -9,14 +9,17 @@
 </head>
 <body>
     <div id="main-editor" class="container editor-container">
-        <!-- <div><h1>Upload and Display Image</h1></div>
-        <div><input type="file" id="imageInput" accept="image/*" /></div>
-        <div><input type="file" id="additionalImageInput" accept="image/*" /></div> -->
-        <div class="image-container">
-            <img class="displayImageClass" id="displayImage" src="" alt="Uploaded Image" />
-            <div id="markerContainer"></div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="image-container">
+                    <img class="displayImageClass" id="displayImage" src="" alt="Uploaded Image" />
+                    <div id="markerContainer"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div id="draggableContainer"></div>
+            </div>
         </div>
-        <div id="draggableContainer"></div>
     </div>
     <div id="main-editor-btn" >
         <button class="previewBtn" onclick="sendPreviewCall()">Preview</button>
