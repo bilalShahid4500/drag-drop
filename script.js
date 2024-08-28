@@ -257,11 +257,6 @@ async function sendPreviewCall() {
     const additionalImage = document.getElementById('additional_image');
     const imgRect = additionalImage.getBoundingClientRect();
 
-    const correct_height = imgRect.height/2;
-    const correct_width = imgRect.height/2;
-    data.additional_image.x = data.additional_image.x - correct_width;
-    data.additional_image.y = data.additional_image.y - correct_height;
-
     const formData = new FormData();
     formData.append('file', resources[2].value[0]);
     formData.append('additional_image', resources[3].value[0]); 
@@ -302,23 +297,17 @@ async function sendPreviewCall() {
 
 
 function sendSaveCall() {
-    let obj = {
-        file: resources[2].value,
-        data: data, 
-        width: mainImageDimensions.width, 
-        height: mainImageDimensions.height,
-        language: resources[0].value, 
-        type: resources[1].value, 
-        preview: recievedPreview,
-        id: 4
-    }
+    const additionalImage = document.getElementById('additional_image');
+    const imgRect = additionalImage.getBoundingClientRect();
 
-    console.log(obj);
     const formSaveData = new FormData();
     formSaveData.append('file', resources[2].value[0]); 
+    formSaveData.append('additional_image', resources[3].value[0]); 
     formSaveData.append('data', JSON.stringify(data));
     formSaveData.append('width', mainImageDimensions.width);
     formSaveData.append('height', mainImageDimensions.height);
+    formSaveData.append('additional_image_height', imgRect.height);
+    formSaveData.append('additional_image_width', imgRect.width);
     formSaveData.append('language', resources[0].value);
     formSaveData.append('type', resources[1].value);
     formSaveData.append('preview', recievedPreview);
