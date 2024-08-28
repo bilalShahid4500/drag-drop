@@ -252,6 +252,7 @@ function attachDragAndDropEventListners() {
 async function sendPreviewCall() {
     const formData = new FormData();
     formData.append('file', resources[2].value[0]);
+    formData.append('additional_image', resources[3].value[0]); 
     formData.append('data', JSON.stringify(data));
     formData.append('width', mainImageDimensions.width);
     formData.append('height', mainImageDimensions.height);
@@ -301,7 +302,7 @@ function sendSaveCall() {
     console.log(obj);
     const formSaveData = new FormData();
     formSaveData.append('file', resources[2].value[0]); 
-    formSaveData.append('data', JSON.stringify(data)); 
+    formSaveData.append('data', JSON.stringify(data));
     formSaveData.append('width', mainImageDimensions.width);
     formSaveData.append('height', mainImageDimensions.height);
     formSaveData.append('language', resources[0].value);
