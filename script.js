@@ -179,7 +179,6 @@ document.getElementById("userAccountSetupForm").addEventListener("submit", funct
     resources.push({ step: 4, value: logoFile });
 
     // Log the collected values
-    console.log(resources);
     document.getElementById('main-editor').style.display = 'block';
     document.getElementById('main-editor-btn').style.display = 'block';
     document.getElementById('info-wizard').style.display = 'none';
@@ -254,11 +253,17 @@ function attachDragAndDropEventListners() {
 }
 
 async function sendPreviewCall() {
+
+    const additionalImage = document.getElementById('additional_image');
+    const imgRect = additionalImage.getBoundingClientRect();
+
     const formData = new FormData();
     formData.append('file', resources[2].value[0]);
     formData.append('additional_image', resources[3].value[0]); 
     formData.append('data', JSON.stringify(data));
     formData.append('width', mainImageDimensions.width);
+    formData.append('additional_image_height', imgRect.height);
+    formData.append('additional_image_width', imgRect.width);
     formData.append('height', mainImageDimensions.height);
     formData.append('id', 4);
 
