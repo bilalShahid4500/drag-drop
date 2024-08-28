@@ -256,7 +256,10 @@ async function sendPreviewCall() {
 
     const additionalImage = document.getElementById('additional_image');
     const imgRect = additionalImage.getBoundingClientRect();
-
+    const correct_height = imgRect.height/2;
+    const correct_width = imgRect.height/2;
+    data.additional_image.x = data.additional_image.x -  correct_width;
+    data.additional_image.y = data.additional_image.y - correct_height;
     const formData = new FormData();
     formData.append('file', resources[2].value[0]);
     formData.append('additional_image', resources[3].value[0]); 
