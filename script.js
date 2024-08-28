@@ -197,7 +197,9 @@ function startImageEditing() {
         reader.onload = function(e) {
             displayImage.src = e.target.result;
             displayImage.style.display = 'block';
-            createDraggableElements();
+            setTimeout(()=> {
+                createDraggableElements();
+            },200)
         };
         reader.readAsDataURL(editableImage[0]);
     }    
@@ -210,7 +212,9 @@ function addLogoImage() {
         reader.onload = function(e) {
             data.additional_image.src = e.target.result;
             data.additional_image.visible = true;
-            createDraggableElements();
+            setTimeout(()=> {
+                createDraggableElements();
+            },200)
         }
         reader.readAsDataURL(editableLogo[0]);
     }
