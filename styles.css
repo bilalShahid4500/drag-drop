@@ -285,3 +285,27 @@ ul.form-stepper li a .form-stepper-circle {
     padding: 0.7rem 1.5rem;
     border-radius: 5px;
 }
+
+.toaster {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    opacity: 0;
+    transition: opacity 0.5s, bottom 0.5s;
+}
+
+.toaster.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 50px;
+}

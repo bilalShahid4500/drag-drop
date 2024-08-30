@@ -265,7 +265,7 @@ async function sendPreviewCall() {
     formData.append('additional_image_height', imgRect.height);
     formData.append('additional_image_width', imgRect.width);
     formData.append('height', mainImageDimensions.height);
-    formData.append('id', 4);
+    formData.append('user_id', 4);
 
     try {
         const response = await fetch('http://localhost:8000/api/edit_image_preview', {
@@ -279,12 +279,7 @@ async function sendPreviewCall() {
 
         const blob = await response.blob();
         const imageUrl = URL.createObjectURL(blob);
-
-        const reader = new FileReader();
-        reader.readAsDataURL(blob); // Read the Blob as a Data URL (Base64)
-        reader.onloadend = function() {
-            recievedPreview = reader.result;
-        };
+        recievedPreview = blob;
 
         const modal = document.getElementById("myModal");
         const img = document.getElementById("base64Img");
@@ -311,7 +306,7 @@ function sendSaveCall() {
     formSaveData.append('language', resources[0].value);
     formSaveData.append('type', resources[1].value);
     formSaveData.append('preview', recievedPreview);
-    formSaveData.append('id', 4);
+    formSaveData.append('user_id', 4);
 
     fetch('http://localhost:8000/api/save_file_data', {
         method: 'POST', 
@@ -319,7 +314,19 @@ function sendSaveCall() {
     })
     .then(data => {
         console.log('Success:', data);
+        closeModal();
+        showToaster('File saved.')
     })
+}
+
+function showToaster(message) {
+    const toaster = document.getElementById('toaster');
+    toaster.innerHTML = message;
+    toaster.className = "toaster show";
+
+    setTimeout(function() {
+        toaster.className = toaster.className.replace("show", "");
+    }, 3000); // Hide after 3 seconds
 }
 
 function validateForm(stepNumber) {
