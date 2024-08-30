@@ -3,8 +3,7 @@ let recievedPreview = [];
 const data = {
     "sponser_name": { x: 0, y: 0, font: "12px" },
     "person_name": { x: 0, y: 0, font: "12px" },
-    "person_title": { x: 0, y: 0, font: "12px" },
-    "additional_image": { x: 0, y: 0, src: "", visible: false }
+    "person_title": { x: 0, y: 0, font: "12px" }
 };
 let mainImageDimensions = {
     width: 0,
@@ -177,6 +176,11 @@ document.getElementById("userAccountSetupForm").addEventListener("submit", funct
     }
 
     resources.push({ step: 4, value: logoFile });
+
+    if (categoryValue === "Coupon Template") {
+        data["coupon_amount"] = { x: 0, y: 0, font: "12px", visible: true };
+    }
+    data["additional_image"] = { x: 0, y: 0, src: "", visible: false };
 
     // Log the collected values
     document.getElementById('main-editor').style.display = 'block';
