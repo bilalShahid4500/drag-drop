@@ -1,9 +1,9 @@
 let resources = [];
 let recievedPreview = [];
 const data = {
-    "sponser_name": { x: 0, y: 0, font: "12px" },
-    "person_name": { x: 0, y: 0, font: "12px" },
-    "person_title": { x: 0, y: 0, font: "12px" }
+    "sponser_name": { x: 0, y: 0, font: "12px", bold: false, italic: false },
+    "person_name": { x: 0, y: 0, font: "12px", bold: false, italic: false },
+    "person_title": { x: 0, y: 0, font: "12px", bold: false, italic: false }
 };
 let mainImageDimensions = {
     width: 0,
@@ -44,8 +44,14 @@ function createDraggableElements() {
             element.id = key;
             element.className = 'draggable';
             element.textContent = key.replace('_', ' ');
-            element.style.fontSize = data[key].font || '12px'; // Apply default font size
+            element.style.fontSize = data[key].font || '12px';
+            element.style.fontWeight = data[key].bold ? 'bold' : 'normal';
+            element.style.fontStyle = data[key].italic ? 'italic' : 'normal';
 
+            const controlContainer = document.createElement('div');
+            controlContainer.className = 'control-container';
+
+            // Font size dropdown
             const dropdown = document.createElement('select');
             dropdown.className = 'dropdown';
             for (let i = 9; i <= 30; i++) {
@@ -63,7 +69,33 @@ function createDraggableElements() {
                 data[key].font = this.value;
             });
 
-            element.appendChild(dropdown);
+            // Bold button
+            const boldButton = document.createElement('button');
+            boldButton.className = 'control-button';
+            boldButton.textContent = 'B';
+            boldButton.style.fontWeight = 'bold';
+
+            boldButton.addEventListener('click', function() {
+                data[key].bold = !data[key].bold;
+                element.style.fontWeight = data[key].bold ? 'bold' : 'normal';
+            });
+
+            // Italic button
+            const italicButton = document.createElement('button');
+            italicButton.className = 'control-button';
+            italicButton.textContent = 'I';
+            italicButton.style.fontStyle = 'italic';
+
+            italicButton.addEventListener('click', function() {
+                data[key].italic = !data[key].italic;
+                element.style.fontStyle = data[key].italic ? 'italic' : 'normal';
+            });
+
+            // Append controls
+            controlContainer.appendChild(dropdown);
+            controlContainer.appendChild(boldButton);
+            controlContainer.appendChild(italicButton);
+            element.appendChild(controlContainer);
 
             // Custom drag logic for text elements
             let isDragging = false;
@@ -80,12 +112,6 @@ function createDraggableElements() {
                 if (isDragging) {
                     let x = event.clientX - offsetX;
                     let y = event.clientY - offsetY;
-
-                    // Boundary check to prevent dragging out of the main image
-                    // if (x < imgRect.left) x = imgRect.left;
-                    // if (y < imgRect.top) y = imgRect.top;
-                    // if (x + element.offsetWidth > imgRect.right) x = imgRect.right - element.offsetWidth;
-                    // if (y + element.offsetHeight > imgRect.bottom) y = imgRect.bottom - element.offsetHeight;
 
                     element.style.left = `${x}px`;
                     element.style.top = `${y}px`;
@@ -105,11 +131,10 @@ function createDraggableElements() {
                 }
             });
         }
-        // Position markers to the right side of the image
-        setTimeout(()=>{
-            // element.style.left = `${imgRect.left + imgRect.width + 20}px`;
+
+        setTimeout(() => {
             element.style.top = `${10 + Object.keys(data).indexOf(key) * 40}px`;
-        })
+        });
         draggableContainer.appendChild(element);
     });
 }
@@ -178,7 +203,7 @@ document.getElementById("userAccountSetupForm").addEventListener("submit", funct
     resources.push({ step: 4, value: logoFile });
 
     if (categoryValue === "Coupon Template") {
-        data["coupon_amount"] = { x: 0, y: 0, font: "12px", visible: true };
+        data["coupon_amount"] = { x: 0, y: 0, font: "12px", visible: true, bold: false, italic: false };
     }
     data["additional_image"] = { x: 0, y: 0, src: "", visible: false };
 

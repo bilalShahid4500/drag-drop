@@ -309,3 +309,22 @@ ul.form-stepper li a .form-stepper-circle {
     opacity: 1;
     bottom: 50px;
 }
+.control-container {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.control-button {
+    margin-left: 5px;
+    padding: 0px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.control-button:active {
+    background-color: #e0e0e0;
+}
