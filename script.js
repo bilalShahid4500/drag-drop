@@ -1,9 +1,9 @@
 let resources = [];
 let recievedPreview = [];
 const data = {
-    "sponser_name": { x: 0, y: 0, font: "12px", bold: false, italic: false },
-    "person_name": { x: 0, y: 0, font: "12px", bold: false, italic: false },
-    "person_title": { x: 0, y: 0, font: "12px", bold: false, italic: false }
+    "sponser_name": { dummyText: "Adlee", x: 0, y: 0, font: "12px", bold: false, italic: false, underline: false },
+    "person_name": { dummyText: "Danny", x: 0, y: 0, font: "12px", bold: false, italic: false, underline: false },
+    "person_title": { dummyText: "MR", x: 0, y: 0, font: "12px", bold: false, italic: false, underline: false }
 };
 let mainImageDimensions = {
     width: 0,
@@ -47,6 +47,7 @@ function createDraggableElements() {
             element.style.fontSize = data[key].font || '12px';
             element.style.fontWeight = data[key].bold ? 'bold' : 'normal';
             element.style.fontStyle = data[key].italic ? 'italic' : 'normal';
+            element.style.textDecoration = data[key].underline ? 'underline' : 'none';
 
             const controlContainer = document.createElement('div');
             controlContainer.className = 'control-container';
@@ -91,10 +92,22 @@ function createDraggableElements() {
                 element.style.fontStyle = data[key].italic ? 'italic' : 'normal';
             });
 
+            // Underline button
+            const underlineButton = document.createElement('button');
+            underlineButton.className = 'control-button';
+            underlineButton.textContent = 'U';
+            underlineButton.style.textDecoration = 'underline';
+
+            underlineButton.addEventListener('click', function() {
+                data[key].underline = !data[key].underline;
+                element.style.textDecoration = data[key].underline ? 'underline' : 'none';
+            });
+
             // Append controls
             controlContainer.appendChild(dropdown);
             controlContainer.appendChild(boldButton);
             controlContainer.appendChild(italicButton);
+            controlContainer.appendChild(underlineButton);
             element.appendChild(controlContainer);
 
             // Custom drag logic for text elements
@@ -203,7 +216,7 @@ document.getElementById("userAccountSetupForm").addEventListener("submit", funct
     resources.push({ step: 4, value: logoFile });
 
     if (categoryValue === "Coupon Template") {
-        data["coupon_amount"] = { x: 0, y: 0, font: "12px", visible: true, bold: false, italic: false };
+        data["coupon_amount"] = { dummyText: "$100", x: 0, y: 0, font: "12px", visible: true, bold: false, italic: false, underline: false };
     }
     data["additional_image"] = { x: 0, y: 0, src: "", visible: false };
 
@@ -272,11 +285,6 @@ function attachDragAndDropEventListners() {
 
             data[elementId].x = x;
             data[elementId].y = y;
-
-            // console.log({
-            //     ...data,
-            //     main_image_dimensions: mainImageDimensions
-            // });
         }
     });
 }
